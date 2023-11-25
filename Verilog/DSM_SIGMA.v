@@ -25,6 +25,11 @@ module DSM_SIGMA(
 	DATA_O
 );
 
+initial begin
+  DATA_Latch_pos = 0;
+  DATA_Latch_neg = 0;
+end
+
 	/* Parameter Definition */
 	parameter PCM_Bit_Length = 32;
 	

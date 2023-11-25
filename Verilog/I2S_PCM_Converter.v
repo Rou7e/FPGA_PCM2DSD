@@ -34,6 +34,9 @@ module I2S_PCM_Converter(
     DATAL_O,
     DATAR_O
 );
+
+
+	
     /* Parameter Definition */
     parameter PCM_Bit_Length = 32;
 
@@ -55,12 +58,19 @@ module I2S_PCM_Converter(
     reg signed   [PCM_Bit_Length-1:0]   DATAR_Buf;
     reg                                 WCLK_Buf;
 
+initial begin
+  DATA_LR_Buf = 0;
+  DATAL_Buf = 0;
+  DATAR_Buf = 0;
+  WCLK_Buf = 0;
+end
+	 
     /* RTL */
     // Store the I2S Data and LRCK Synchronizing with Positive Edge of BCLK_I
     always @ (posedge BCLK_I) begin
         WCLK_Buf <= LRCK_I;
 
-        if (RST_I == 1'b0) begin
+        if (RST_I == 1'b1) begin
       	    // When Reset is Active, Store the zero data.
             DATA_LR_Buf[2*PCM_Bit_Length-1:0] <= {DATA_LR_Buf[2*PCM_Bit_Length-2:0], 1'b0}; 
         end else begin
@@ -75,7 +85,7 @@ module I2S_PCM_Converter(
 
     // Output the Parallel PCM Data Synchronizing with Negative Edge of Word Clock
     always @ (negedge WCLK_O) begin
-        if (RST_I == 1'b0) begin
+        if (RST_I == 1'b1) begin
 	    // When Reset is Active, Output the Zero Data
             DATAL_Buf[PCM_Bit_Length-1:0] <= 0;
             DATAR_Buf[PCM_Bit_Length-1:0] <= 0;

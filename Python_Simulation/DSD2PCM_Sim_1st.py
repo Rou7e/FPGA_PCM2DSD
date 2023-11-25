@@ -53,43 +53,42 @@ def ZeroOrderHold(xPCM, OSR):
 
 
 # Main Entry Point
-if __name__ == "__main__":
-    
-    # PCM parameters
-    fs_PCM = 44100 # Sampling frequency
-    nbits = 16 # Quantization Bits
-    
-    # DSD Parameters
-    OSR = 64 # DSD vs PCM sampling frequency ratio
-    fs_DSD = fs_PCM * OSR # DSD Sampling frequency
-    
-    # Time Plots
-    t_length = 1 # Time length (sec)
-    t = np.arange(0, 1, 1/fs_PCM)
-    
-    # Reference Analog Signal (Amplitude Range = [-1, 1])
-    f = 1000 # Frequency
-    x = np.sin(2 * np.pi * 1000 * t) # float Sine wave
-    #x = np.zeros(fs_PCM) # Mute Data
-    
-    # Analog to Linear PCM conversion
-    x_LPCM = LPCM(x, nbits)
-    
-    # Zero Order Hold to Convert DSD
-    x_LPCM_Hold = ZeroOrderHold(x_LPCM, OSR)
-    
-    # Convert PCM to DSD
-    y_DSD, qe = PDM(x_LPCM_Hold, nbits)
 
-    
-    # Plot the filtered DSD Signal, Normalized PCM and DSD Signal
-    y_filtered = signal.upfirdn(np.ones(10), y_DSD) #Moving Average Filter
-    y_filtered = y_filtered/np.max(y_filtered) # Normalize
-    plt.figure()
-    plt.plot(np.arange(0, 1, 1/fs_DSD)[0:2822], y_DSD[0:2822] * 2 - 1, label="DSD") # DSD
-    plt.plot(np.arange(0, 1, 1/fs_DSD)[0:2822], y_filtered[0:2822] * 2 - 1, label="Filtered DSD") # Filtered Data
-    plt.plot(np.arange(0, 1, 1/fs_DSD)[0:2822], x_LPCM_Hold[0:2822]/np.max(x_LPCM_Hold), label="PCM") # PCM
-    plt.legend(loc="upper right")
-    plt.xlabel("Time [s]")
-    plt.ylabel("Normalized Amplitude")
-    
+# PCM parameters
+fs_PCM = 44100 # Sampling frequency
+nbits = 16 # Quantization Bits
+
+# DSD Parameters
+OSR = 64 # DSD vs PCM sampling frequency ratio
+fs_DSD = fs_PCM * OSR # DSD Sampling frequency
+
+# Time Plots
+t_length = 1 # Time length (sec)
+t = np.arange(0, 1, 1/fs_PCM)
+
+# Reference Analog Signal (Amplitude Range = [-1, 1])
+f = 1000 # Frequency
+x = np.sin(2 * np.pi * 1000 * t) # float Sine wave
+#x = np.zeros(fs_PCM) # Mute Data
+
+# Analog to Linear PCM conversion
+x_LPCM = LPCM(x, nbits)
+
+# Zero Order Hold to Convert DSD
+x_LPCM_Hold = ZeroOrderHold(x_LPCM, OSR)
+
+# Convert PCM to DSD
+y_DSD, qe = PDM(x_LPCM_Hold, nbits)
+
+
+# Plot the filtered DSD Signal, Normalized PCM and DSD Signal
+y_filtered = signal.upfirdn(np.ones(10), y_DSD) #Moving Average Filter
+y_filtered = y_filtered/np.max(y_filtered) # Normalize
+plt.figure()
+plt.plot(np.arange(0, 1, 1/fs_DSD)[0:2822], y_DSD[0:2822] * 2 - 1, label="DSD") # DSD
+plt.plot(np.arange(0, 1, 1/fs_DSD)[0:2822], y_filtered[0:2822] * 2 - 1, label="Filtered DSD") # Filtered Data
+plt.plot(np.arange(0, 1, 1/fs_DSD)[0:2822], x_LPCM_Hold[0:2822]/np.max(x_LPCM_Hold), label="PCM") # PCM
+plt.legend(loc="upper right")
+plt.xlabel("Time [s]")
+plt.ylabel("Normalized Amplitude")
+plt.show()
